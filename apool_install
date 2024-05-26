@@ -1,0 +1,21 @@
+cd /
+rm -rf apoolminer_linux_autoupdate_v1.4.1.tar
+rm -rf apoolminer_linux_autoupdate_v1.4.1
+wget https://github.com/apool-io/apoolminer/releases/download/v1.4.1/apoolminer_linux_autoupdate_v1.4.1.tar
+tar -xvf apoolminer_linux_autoupdate_v1.4.1.tar
+cd /apoolminer_linux_autoupdate_v1.4.1
+ipv4_address=$(ip addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
+cpu_cores=$(nproc)
+eastern_time=$(TZ="Asia/Shanghai" date)
+day=$(date -d "$eastern_time" '+%d')
+hour=$(date -d "$eastern_time" '+%H')
+minute=$(date -d "$eastern_time" '+%M')
+sed -i "s/test_accountname/CP_AAAAAAA --worker ${ipv4_address}-${cpu_cores/g}v-${day}/${hour}/${minute}" ./run_qubic_cpu.sh
+sed -i "s/CP_32hb86nvxc/CP_AAAAAA --worker ${ipv4_address}-${cpu_cores/g}v-${day}/${hour}/${minute}/g" ./run_qubic_cpu.sh
+cd /etc/init.d
+echo "wait..." > qubic.sh
+chmod a+x qubic.sh
+update-rc.d qubic.sh defaults
+cd /apoolminer_linux_autoupdate_v1.4.1
+nohup ./run_qubic_cpu.sh &
+ps -ef | grep apool
